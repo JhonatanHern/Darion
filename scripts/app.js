@@ -146,3 +146,28 @@ document.getElementById( 'contact-button' ).addEventListener( 'click' , function
 	transitionHandler.newScreen('contact')
 	title.set('Contacto')
 })
+
+/*
+ * Since we will only ask for information using fetch API, get method 
+ * and json for the response, this is a wrapper for the
+ * request, it also shows the loading icon until the response is served.
+*/
+function fetchWrapper(url,params,callback){
+	spinner.show()
+	url = 'queries/' + url + '?study=' + encodeURIComponent( params.study )
+	if (params.title) {
+		url += '&title=' + encodeURIComponent( params.title )
+	}
+	fetch( url ).then( function( resp ) {
+		if(resp.ok) {
+			return resp.json()
+		}
+		callback( true )
+	}).then(function(json) {
+		callback( false , json )
+		spinner.hide()
+	}).catch(function(error) {
+		console.log('There has been a problem with your fetch operation: ' + error.message)
+		callback( true )
+	})
+}
