@@ -147,6 +147,18 @@ document.getElementById( 'contact-button' ).addEventListener( 'click' , function
 	title.set('Contacto')
 })
 
+document.getElementById( 'study-type' ).addEventListener( 'click' , function() {
+	fetchWrapper( 'mods.php' , {} , function(err,res) {
+		if (err) {
+			console.log('error in request')
+			return
+		}
+		let options = ''
+		res.forEach(e=>options += `<option value=${e}>${e}</option>`)
+		transitionHandler.newScreen('modality-picker-panel')
+	})
+})
+
 /*
  * Since we will only ask for information using fetch API, get method 
  * and json for the response, this is a wrapper for the
@@ -163,10 +175,10 @@ function fetchWrapper(url,params,callback){
 			return resp.json()
 		}
 		callback( true )
-	}).then(function(json) {
+	}).then(function( json ) {
 		callback( false , json )
 		spinner.hide()
-	}).catch(function(error) {
+	}).catch(function( error ) {
 		console.log('There has been a problem with your fetch operation: ' + error.message)
 		callback( true )
 	})

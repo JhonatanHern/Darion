@@ -25,9 +25,14 @@ self.addEventListener('fetch', function(event) {
 		caches.match(event.request)
 			.then(function(response) {
 				// Cache hit - return response
-				if (response && !navigator.onLine) {
+				if (response) {
 					console.log('cache hit')
 					return response
+				}
+				if (navigator.onLine) {
+					console.log('online')
+				}else{
+					console.log('offline')
 				}
 				console.log('cache miss')
 				// IMPORTANT: Clone the request. A request is a stream and
