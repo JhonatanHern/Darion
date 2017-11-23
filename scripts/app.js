@@ -27,7 +27,10 @@ var studies = {
 	},
 	"Densitometría ósea" : {
 		description : "Descripción del estudio sobre Densitometría"
-	} 
+	},
+	"example" : {//this one should be deleted in deploy
+		description : "example description [things in spanish]"
+	}
 }
 
 //a shorthand for the loading animation
@@ -148,13 +151,18 @@ document.getElementById( 'contact-button' ).addEventListener( 'click' , function
 })
 
 document.getElementById( 'study-type' ).addEventListener( 'click' , function() {
-	fetchWrapper( 'mods.php' , {} , function(err,res) {
+	fetchWrapper( 'mods.php' , 
+		{study:document.getElementById( 'first-picker' ).value},
+		function(err,res) {
 		if (err) {
 			console.log('error in request')
 			return
 		}
 		let options = ''
-		res.forEach(e=>options += `<option value=${e}>${e}</option>`)
+		for (var i = res.length - 1; i >= 0; i--) {
+			options += `<option value=${res[i]}>${res[i]}</option>`
+		}
+		document.getElementById( 'modality-picker' ).innerHTML = options
 		transitionHandler.newScreen('modality-picker-panel')
 	})
 })

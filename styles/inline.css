@@ -41,6 +41,7 @@ body {
 body > *{
 	font-size: 1.3em;
 	height: 90vh;
+	width: 100vw;
 	position: absolute;
 	top: 10vh;
 	padding: 0em 2em 2em 2em;
@@ -230,6 +231,20 @@ main footer{
 main footer img{
 	height: 100%;
 	width: 100%;
+}
+@media(min-width: 500px){
+	main footer{
+		position: fixed;
+		top: 100vh;
+		height: 17vh;
+		transform: translateY(-100%);
+		width: 100%;
+		left: 0;
+	}
+	main footer img{
+		height: 17vh;
+		width: 70vh;
+	}	
 }
 input,textarea{
 	width: 100%;
