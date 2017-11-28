@@ -29,18 +29,21 @@
 	</div>
 	<main id="main">
 		<p>
-			En SEROFCA siempre priorizamos el conocimiento, es por eso que te presentamos esta app diseñada para informarte acerca de los estudios que vayas a realizarte, escoje tu estudio para comenzar.
+			En SEROFCA siempre priorizamos el conocimiento, es por eso que te presentamos esta App diseñada para informarte acerca de los estudios que vayas a realizarte, escoje tu estudio para comenzar.
 		</p>
 		<h3>¿Qué te vas a Realizar?</h3>
 		<select id="first-picker" class="title-changer" app-destiny="menu2">
 			<option disabled selected value>Selecciona un estudio</option>
 			<!--option value="Radiología">Radiología</option-->
-			<option value="Tomografía">Tomografía</option>
-			<option value="Mamografía">Mamografía</option>
-			<option value="Intervencionismo">Intervencionismo</option>
-			<option value="Gammagrafía">Gammagrafía</option>
+			<option value="Ultrasonido">Ultrasonido</option>
 			<option value="Rayos X">Rayos X</option>
 			<option value="Densitometría ósea">Densitometría ósea</option>
+			<option value="Mamografía">Mamografía</option>
+			<option value="Tomografía">Tomografía</option>
+			<option value="Intervencionismo">Intervencionismo</option>
+			<option value="Gammagrafía">Gammagrafía</option>
+			<option value="SPECT">SPECT</option>
+			<option value="PET">PET</option>
 			<option value="example">example</option>
 		</select>
 		<footer>
@@ -56,9 +59,20 @@
 	</section>
 	<section id="modality-picker-panel">
 		<h3>Modalidad de Estudio</h3>
-		<select id="modality-picker">
+		<select
+			id="modality-picker"
+			class="title-changer"
+			app-destiny="modality-viewer">
 		</select>
 	</section>
+	<section id="modality-viewer" titleChanger="true">
+		<br>
+		<br>
+		<button class="panel-button" transition-target="indications">Indicaciones</button>
+		<button class="panel-button" transition-target="preparation">Preparación</button>
+	</section>
+	<section id="indications"></section>
+	<section id="preparation"></section>
 	<section id="contact" titleChanger="true">
 		<form>
 			<input type="text" name="Nombre" placeholder="Nombre">

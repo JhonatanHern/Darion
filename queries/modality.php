@@ -3,7 +3,7 @@ require 'connection.php';
 
 $name = sanitize($_GET['title']);
 
-$sql = "SELECT indications AS i ,preparation AS p FROM modality WHERE name = '$name'";
+$sql = "SELECT indications AS i ,preparation AS p FROM modality WHERE name = $name";
 
 $result = mysqli_query($conn, $sql);
 

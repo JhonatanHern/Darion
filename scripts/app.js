@@ -1,8 +1,9 @@
 /*
  * This file provides the functionality of the app
  * it is written entirely in vanilla js (no frameworks)
- * 
 */
+
+
 
 //the following object stores some data about the studies
 
@@ -133,6 +134,16 @@ transitionHandler.start()
 Array.from(document.getElementsByClassName('title-changer')).forEach(function(element) {
 	element.addEventListener('change',function(e) {
 		title.set(this.value)
+		transitionHandler.newScreen( this.getAttribute( 'app-destiny' ) )
+	})
+})
+/* The following code will handle simple 
+ * transitions made when the user clicks a button
+ */
+Array.from(document.getElementsByClassName('panel-button')).forEach(function(element) {
+	element.addEventListener('click',function() {
+		let transitionTarget = this.getAttribute('transition-target')
+		transitionHandler.newScreen(transitionTarget)
 	})
 })
 /*
@@ -142,7 +153,6 @@ Array.from(document.getElementsByClassName('title-changer')).forEach(function(el
 document.getElementById( 'first-picker' ).addEventListener( 'change' , function() {
 	let study = this.value
 	description.set( study )
-	transitionHandler.newScreen('menu2')
 })
 
 document.getElementById( 'contact-button' ).addEventListener( 'click' , function() {
@@ -150,9 +160,22 @@ document.getElementById( 'contact-button' ).addEventListener( 'click' , function
 	title.set('Contacto')
 })
 
+document.getElementById( 'modality-picker' ).addEventListener( 'change' ,function (e) {
+	fetchWrapper( 'modality.php' , { title : e.target.value },
+		function (err,json) {
+			if (err) {
+				console.log('error')
+			}
+			let indicationsSection = document.getElementById('indications'),
+				preparationSection = document.getElementById('preparation')
+			indicationsSection.innerHTML = `<h4>Indicaciones</h4>${json.indications}`
+			preparationSection.innerHTML = `<h4>Preparación</h4>${json.preparation}`
+		}
+	)
+})
+
 document.getElementById( 'study-type' ).addEventListener( 'click' , function() {
-	fetchWrapper( 'mods.php' , 
-		{study:document.getElementById( 'first-picker' ).value},
+	fetchWrapper( 'mods.php' ,{},
 		function(err,res) {
 		if (err) {
 			console.log('error in request')
@@ -174,7 +197,7 @@ document.getElementById( 'study-type' ).addEventListener( 'click' , function() {
 */
 function fetchWrapper(url,params,callback){
 	spinner.show()
-	url = 'queries/' + url + '?study=' + encodeURIComponent( params.study )
+	url = 'queries/' + url + '?study=' + document.getElementById( 'first-picker' ).value
 	if (params.title) {
 		url += '&title=' + encodeURIComponent( params.title )
 	}
