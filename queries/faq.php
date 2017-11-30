@@ -4,7 +4,7 @@ require 'connection.php';
 $study = sanitize($_GET['study']);
 $title = sanitize($_GET['title']);
 
-$sql = "SELECT response FROM faq WHERE title = '$title'";
+$sql = "SELECT response FROM faq WHERE title = $title";
 
 $result = mysqli_query($conn, $sql);
 

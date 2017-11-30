@@ -3,16 +3,16 @@ require 'connection.php';
 
 $study = sanitize($_GET['study']);
 
-$sql = "SELECT title FROM tips WHERE study_name = '$study'";
+$sql = "SELECT title FROM tips WHERE study_name = $study";
 
 $result = mysqli_query($conn, $sql);
 
 if (mysqli_num_rows($result) > 0) {
-	$result = '[';
+	$answers = '[';
 	while($row = mysqli_fetch_assoc($result)) {
-		$result += '"'.$row['title'].'",';
+		$answers .= '"'.$row['title'].'",';
 	}
-	echo substr( $result , 0 , strlen($result) - 1 ) . ']';
+	echo substr( $answers , 0 , strlen($answers) - 1 ) . ']';
 } else {
 	echo '{"error":true}';
 }

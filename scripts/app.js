@@ -3,8 +3,6 @@
  * it is written entirely in vanilla js (no frameworks)
 */
 
-
-
 //the following object stores some data about the studies
 
 var studies = {
@@ -149,6 +147,7 @@ Array.from(document.getElementsByClassName('panel-button')).forEach(function(ele
 /*
  * the following functions add event listeners in order to display
  * the correct frame with the right title whenever we have to
+ * or do some ajax request
 */
 document.getElementById( 'first-picker' ).addEventListener( 'change' , function() {
 	let study = this.value
@@ -174,6 +173,32 @@ document.getElementById( 'modality-picker' ).addEventListener( 'change' ,functio
 	)
 })
 
+document.getElementById( 'faq-button' ).addEventListener( 'click' , function() {
+	fetchWrapper('faqs.php',{},function(err,data) {
+		if (err) {
+			console.log('err')
+			return
+		}
+		let sectionToWrite = document.getElementById('faq')
+		data.forEach(function(e) {
+			sectionToWrite.innerHTML += `<div>${e}</div>`
+		})
+	})
+})
+document.getElementById( 'tips-button' ).addEventListener( 'click' , function() {
+	fetchWrapper('tips.php',{},function(err,data) {
+		if (err) {
+			console.log('err')
+			return
+		}
+		let sectionToWrite = document.getElementById('tips')
+		data.forEach(function(e) {
+			sectionToWrite.innerHTML += `<div>${e}</div>`
+		})
+		updateListeners()
+	})
+})
+
 document.getElementById( 'study-type' ).addEventListener( 'click' , function() {
 	fetchWrapper( 'mods.php' ,{},
 		function(err,res) {
@@ -181,7 +206,7 @@ document.getElementById( 'study-type' ).addEventListener( 'click' , function() {
 			console.log('error in request')
 			return
 		}
-		let options = ''
+		let options = '<option disabled selected value>Selecciona una opción</option>'
 		for (var i = res.length - 1; i >= 0; i--) {
 			options += `<option value=${res[i]}>${res[i]}</option>`
 		}
@@ -189,7 +214,37 @@ document.getElementById( 'study-type' ).addEventListener( 'click' , function() {
 		transitionHandler.newScreen('modality-picker-panel')
 	})
 })
-
+/*
+ * When the tips section is updated, the old divs are deleted, and new
+ * ones are attached to the section#tips, thus, we have to create
+ * new event listeners.
+ * 
+ * The next function is intended to do that.
+*/
+function updateListeners() {
+	let divsToUpdate = Array.from(document.querySelectorAll('#tips > div'))
+	divsToUpdate.forEach(
+		e=>{
+			e.addEventListener('click',()=>{
+				let title = e.innerHTML
+				fetchWrapper('tip.php',{title:title},function(err,res) {
+					if (err) {
+						console.log('error')
+						return
+					}
+					let section = document.getElementById('tip-answer')
+					section.innerHTML = `
+						<h3>${title}</h3>
+						<p>
+							${res.information}
+						</p>
+					`
+				})
+				transitionHandler.newScreen('tip-answer')
+			})
+		}
+	)
+}
 /*
  * Since we will only ask for information using fetch API, get method 
  * and json for the response, this is a wrapper for the

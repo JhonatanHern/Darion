@@ -11,6 +11,9 @@ html,body{
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
+button{
+	cursor: pointer;
+}
 html {overflow: hidden}
 body {
 	display: -webkit-box;
@@ -46,7 +49,7 @@ body > *{
 	top: 10vh;
 	padding: 0em 2em 2em 2em;
 	overflow: auto;
-	animation: fadeInMove 2s ease-in-out;
+	animation: fadeInMove 1s ease-in-out;
 	background: #ececec;
 }
 main{
@@ -252,4 +255,13 @@ input,textarea{
 	margin-top: .6em;
 	border: 2px solid silver;
 	padding: .3em; 
+}
+#tips div{
+	padding: .5em;
+	color: white;
+	background-color: rgb(28,117,188);
+	border-radius: 3px;
+	margin-top: .5em;
+	font-size: 1.1em;
+	cursor: pointer;
 }
