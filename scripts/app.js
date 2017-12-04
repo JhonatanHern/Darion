@@ -145,6 +145,11 @@ Array.from(document.getElementsByClassName('panel-button')).forEach(function(ele
 	})
 })
 /*
+ * The following object will handle the transitions 
+ * 
+ * 
+*/
+/*
  * the following functions add event listeners in order to display
  * the correct frame with the right title whenever we have to
  * or do some ajax request
@@ -153,12 +158,10 @@ document.getElementById( 'first-picker' ).addEventListener( 'change' , function(
 	let study = this.value
 	description.set( study )
 })
-
 document.getElementById( 'contact-button' ).addEventListener( 'click' , function() {
 	transitionHandler.newScreen('contact')
 	title.set('Contacto')
 })
-
 document.getElementById( 'modality-picker' ).addEventListener( 'change' ,function (e) {
 	fetchWrapper( 'modality.php' , { title : e.target.value },
 		function (err,json) {
@@ -172,19 +175,6 @@ document.getElementById( 'modality-picker' ).addEventListener( 'change' ,functio
 		}
 	)
 })
-
-document.getElementById( 'faq-button' ).addEventListener( 'click' , function() {
-	fetchWrapper('faqs.php',{},function(err,data) {
-		if (err) {
-			console.log('err')
-			return
-		}
-		let sectionToWrite = document.getElementById('faq')
-		data.forEach(function(e) {
-			sectionToWrite.innerHTML += `<div>${e}</div>`
-		})
-	})
-})
 document.getElementById( 'tips-button' ).addEventListener( 'click' , function() {
 	fetchWrapper('tips.php',{},function(err,data) {
 		if (err) {
@@ -192,13 +182,60 @@ document.getElementById( 'tips-button' ).addEventListener( 'click' , function() 
 			return
 		}
 		let sectionToWrite = document.getElementById('tips')
+		sectionToWrite.innerHTML = ''
+		let span = document.createElement('aside')
+		span.innerHTML = `
+			S<br>I<br>G<br>U<br>
+			I<br>E<br>N<br>T<br>
+			E<br>
+		`
+		sectionToWrite.appendChild(span)
+		//span.addEventListener('click',tipsSlide.next)
+		span.addEventListener('click',tipsSlide.next)
+		let counter = 0
+		data.forEach(function(e) {
+			sectionToWrite.innerHTML += `
+				<div style="left:${100*counter}vw" id="app${counter}">
+					<h2>${e}</h2>
+				</div>`
+			counter++
+		})
+		sectionToWrite.appendChild(span)
+		Array.from(sectionToWrite.querySelectorAll('h2')).forEach(function(e) {
+			e.addEventListener('click',function() {
+				transitionHandler.newScreen('tip-answer')
+				let title = e.innerHTML
+				fetchWrapper('tip.php',{title:title},function(err,res) {
+					if (err) {
+						console.log('error')
+						return
+					}
+					let section = document.getElementById('tip-answer')
+					section.innerHTML = `
+						<h3>${title}</h3>
+						<p>
+							${res.information}
+						</p>
+					`
+				})
+			})
+		})
+	})
+})
+document.getElementById( 'faq-button' ).addEventListener( 'click' , function() {
+	fetchWrapper('faqs.php',{},function(err,data) {
+		if (err) {
+			console.log('err')
+			return
+		}
+		let sectionToWrite = document.getElementById('faq')
+		sectionToWrite.innerHTML = ''
 		data.forEach(function(e) {
 			sectionToWrite.innerHTML += `<div>${e}</div>`
 		})
 		updateListeners()
 	})
 })
-
 document.getElementById( 'study-type' ).addEventListener( 'click' , function() {
 	fetchWrapper( 'mods.php' ,{},
 		function(err,res) {
@@ -215,32 +252,32 @@ document.getElementById( 'study-type' ).addEventListener( 'click' , function() {
 	})
 })
 /*
- * When the tips section is updated, the old divs are deleted, and new
- * ones are attached to the section#tips, thus, we have to create
+ * When the faqs section is updated, the old divs are deleted, and new
+ * ones are attached to the section#faq, thus, we have to create
  * new event listeners.
  * 
  * The next function is intended to do that.
 */
 function updateListeners() {
-	let divsToUpdate = Array.from(document.querySelectorAll('#tips > div'))
+	let divsToUpdate = Array.from(document.querySelectorAll('#faq > div'))
 	divsToUpdate.forEach(
 		e=>{
 			e.addEventListener('click',()=>{
 				let title = e.innerHTML
-				fetchWrapper('tip.php',{title:title},function(err,res) {
+				fetchWrapper('faq.php',{title:title},function(err,res) {
 					if (err) {
 						console.log('error')
 						return
 					}
-					let section = document.getElementById('tip-answer')
+					let section = document.getElementById('faq-answer')
 					section.innerHTML = `
 						<h3>${title}</h3>
 						<p>
-							${res.information}
+							${res.response}
 						</p>
 					`
 				})
-				transitionHandler.newScreen('tip-answer')
+				transitionHandler.newScreen('faq-answer')
 			})
 		}
 	)
@@ -269,3 +306,35 @@ function fetchWrapper(url,params,callback){
 		callback( true )
 	})
 }
+/////////////////////////////////////////////////
+/*
+ * The following code is intended to handle the transitions inside the
+ * tips section, the slide in the onclick.
+*/
+var tipsSlide = {
+	counter : 0,
+	next : function () {
+		let panels = Array.from(document.querySelectorAll('#tips > div'))
+		panels = panels.sort(function(a,b) {
+			let numb = (e)=>Number.parseInt(e.id.split('app')[1])
+			return numb(a) > numb(b)
+		})
+
+		if (!panels.length) {
+			//avoid infinite recursion when panels.length = 0
+			this.counter = 0
+			return
+		}
+		if (this.counter >= panels.length - 1) {
+			this.counter = -2
+			this.next() // recursive call
+		}
+		this.counter++
+		for (var i = 0; i < panels.length; i++) {
+			panels[i].style.left = (i-this.counter)*100+'vw'
+		}
+	}
+}
+//tipsSlide.next is a event listener, we need to bind it,
+//otherwise, it will not work properly
+tipsSlide.next = tipsSlide.next.bind(tipsSlide)
